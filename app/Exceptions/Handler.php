@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -46,6 +48,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof HttpException && $exception->getStatusCode() == 403){
+            return new JsonResponse(['message' => $exception->getMessage()], 403);
+        }
+
         return parent::render($request, $exception);
     }
 }
